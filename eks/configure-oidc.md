@@ -1,29 +1,25 @@
-# 🔗 How to setup ALB add-on
+# 🔗 commands to configure IAM OIDC provider
 
 ---
 
-## 📥 Download IAM policy
+## 📌 Set cluster name
 
-```bash id="p1a9xz"
-curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/iam_policy.json
+```bash id="c1x9pl"
+export cluster_name=demo-cluster
 ```
 
 ---
 
-## 🔐 Create IAM Policy
+## 🔍 Get OIDC ID
 
-```bash id="kq2lmn"
-aws iam create-policy \
---policy-name AWSLoadBalancerControllerIAMPolicy \
---policy-document file://iam_policy.json
+```bash id="o7k2mz"
+oidc_id=$(aws eks describe-cluster --name $cluster_name --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
 ```
 
 ---
 
-## 👤 Create IAM Role
+## ✅ Check if IAM OIDC provider already exists
 
-```bash id="z8xv3c"
-eksctl create iamserviceaccount \
---cluster=<your-cluster-name> \
---
+```bash id="q8v3ne"
+aws iam list-open-id-connect-providers | grep $oidc_id | cut -d "_
 ```
